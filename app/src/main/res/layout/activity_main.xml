@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/item_background"
-                android:src="@mipmap/fish_meal"
+                android:src="@mipmap/info"
                 android:layout_margin="10dp"/>
         </GridLayout>
     </RelativeLayout>
