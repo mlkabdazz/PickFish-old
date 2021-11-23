@@ -48,7 +48,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/item_background"
                 android:layout_margin="10dp"
-                android:src="@mipmap/fish_bluexwhite"/>
+                android:src="@mipmap/fish_bluexwhite"
+                android:scaleType="centerInside"/>
 
             <ImageButton
                 android:id="@+id/ib_specific_model"
@@ -56,22 +57,25 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/item_background"
                 android:layout_margin="10dp"
-                android:src="@mipmap/fish_gray" />
+                android:src="@mipmap/fish_gray"
+                android:scaleType="centerInside"/>
 
             <ImageButton
-                android:id="@+id/ib_general_model_2"
+                android:id="@+id/ib_gallery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/item_background"
                 android:layout_margin="10dp"
-                android:src="@mipmap/fish_plate" />
+                android:src="@mipmap/gallery"
+                android:scaleType="centerInside"/>
 
             <ImageButton
-                android:id="@+id/ib_specific_model_2"
+                android:id="@+id/ib_information"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/item_background"
-                android:src="@mipmap/info"
+                android:src="@mipmap/information"
+                android:scaleType="centerInside"
                 android:layout_margin="10dp"/>
         </GridLayout>
     </RelativeLayout>
