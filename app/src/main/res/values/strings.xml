@@ -2,4 +2,7 @@
     <string name="app_name">PickFish</string>
     <string name="slogan">Fish Freshness Detection System</string>
     <string name="pickfish">PickFish</string>
+    <string name="realtime">realtime prediction</string>
+    <string name="information">Information</string>
+    <string name="gallery">Gallery</string>
 </resources>
