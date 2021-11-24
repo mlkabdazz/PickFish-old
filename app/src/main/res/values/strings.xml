@@ -2,7 +2,12 @@
     <string name="app_name">PickFish</string>
     <string name="slogan">Fish Freshness Detection System</string>
     <string name="pickfish">PickFish</string>
-    <string name="realtime">realtime prediction</string>
+    <string name="realtime">Realtime</string>
     <string name="information">Information</string>
     <string name="gallery">Gallery</string>
+    <string name="next_target">Next target</string>
+    <string name="close_spotlight">Close spotlight</string>
+    <string name="information_desc">i\'ll give you some introduction</string>
+    <string name="gallery_desc">Do prediction from pict in gallery</string>
+    <string name="realtime_desc">Do realtime prediction</string>
 </resources>
