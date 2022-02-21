@@ -2,7 +2,7 @@
 <resources>
     <item name="icon_home" type="id"/>
     <item name="icon_likes" type="id"/>
-    <item name="icon_fish_gray" type="id"/>
+    <item name="icon_camera" type="id"/>
     <item name="icon_gallery" type="id"/>
     <item name="icon_information" type="id"/>
 </resources>
