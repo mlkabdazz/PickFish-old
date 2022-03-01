@@ -32,17 +32,18 @@ import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.mlkabdazz.pickfish.customview.OverlayView;
+import com.mlkabdazz.pickfish.customview.OverlayView.DrawCallback;
 import com.mlkabdazz.pickfish.env.BorderedText;
 import com.mlkabdazz.pickfish.env.ImageUtils;
 import com.mlkabdazz.pickfish.env.Logger;
 import com.mlkabdazz.pickfish.tflite.Classifier;
 import com.mlkabdazz.pickfish.tflite.YoloV4Classifier;
 import com.mlkabdazz.pickfish.tracking.MultiBoxTracker;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -53,9 +54,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private static final int TF_OD_API_INPUT_SIZE = 416;
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-basic-416-fp16.tflite";
 
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labels.txt";
 
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -101,7 +102,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     YoloV4Classifier.create(
                             getAssets(),
                             TF_OD_API_MODEL_FILE,
-                            TF_OD_API_LABELS_FILE,
                             TF_OD_API_IS_QUANTIZED);
 //            detector = TFLiteObjectDetectionAPIModel.create(
 //                    getAssets(),
@@ -139,12 +139,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
 
-        trackingOverlay = findViewById(R.id.tracking_overlay);
+        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
         trackingOverlay.addCallback(
-                canvas -> {
-                    tracker.draw(canvas);
-                    if (isDebug()) {
-                        tracker.drawDebug(canvas);
+                new DrawCallback() {
+                    @Override
+                    public void drawCallback(final Canvas canvas) {
+                        tracker.draw(canvas);
+                        if (isDebug()) {
+                            tracker.drawDebug(canvas);
+                        }
                     }
                 });
 
@@ -177,54 +180,60 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         }
 
         runInBackground(
-                () -> {
-                    LOGGER.i("Running detection on image " + currTimestamp);
-                    final long startTime = SystemClock.uptimeMillis();
-                    final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-                    lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        LOGGER.i("Running detection on image " + currTimestamp);
+                        final long startTime = SystemClock.uptimeMillis();
+                        final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+                        lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
-                    Log.e("CHECK", "run: " + results.size());
+                        Log.e("CHECK", "run: " + results.size());
 
-                    cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-                    final Canvas canvas1 = new Canvas(cropCopyBitmap);
-                    final Paint paint = new Paint();
-                    paint.setColor(Color.RED);
-                    paint.setStyle(Style.STROKE);
-                    paint.setStrokeWidth(2.0f);
+                        cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
+                        final Canvas canvas = new Canvas(cropCopyBitmap);
+                        final Paint paint = new Paint();
+                        paint.setColor(Color.RED);
+                        paint.setStyle(Style.STROKE);
+                        paint.setStrokeWidth(2.0f);
 
-                    float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-                    switch (MODE) {
-                        case TF_OD_API:
-                            minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-                            break;
-                    }
-
-                    final List<Classifier.Recognition> mappedRecognitions =
-                            new LinkedList<>();
-
-                    for (final Classifier.Recognition result : results) {
-                        final RectF location = result.getLocation();
-                        if (location != null && result.getConfidence() >= minimumConfidence) {
-                            canvas1.drawRect(location, paint);
-
-                            cropToFrameTransform.mapRect(location);
-
-                            result.setLocation(location);
-                            mappedRecognitions.add(result);
+                        float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
+                        switch (MODE) {
+                            case TF_OD_API:
+                                minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
+                                break;
                         }
+
+                        final List<Classifier.Recognition> mappedRecognitions =
+                                new LinkedList<Classifier.Recognition>();
+
+                        for (final Classifier.Recognition result : results) {
+                            final RectF location = result.getLocation();
+                            if (location != null && result.getConfidence() >= minimumConfidence) {
+                                canvas.drawRect(location, paint);
+
+                                cropToFrameTransform.mapRect(location);
+
+                                result.setLocation(location);
+                                mappedRecognitions.add(result);
+                            }
+                        }
+
+                        tracker.trackResults(mappedRecognitions, currTimestamp);
+                        trackingOverlay.postInvalidate();
+
+                        computingDetection = false;
+
+//                        runOnUiThread(
+//                                new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        showFrameInfo(previewWidth + "x" + previewHeight);
+//                                        showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
+//                                        showInference(lastProcessingTimeMs + "ms");
+//                                    }
+//                                });
                     }
-
-                    tracker.trackResults(mappedRecognitions, currTimestamp);
-                    trackingOverlay.postInvalidate();
-
-                    computingDetection = false;
-
-                    runOnUiThread(
-                            () -> {
-                                showFrameInfo(previewWidth + "x" + previewHeight);
-                                showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                                showInference(lastProcessingTimeMs + "ms");
-                            });
                 });
     }
 
@@ -238,6 +247,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         return DESIRED_PREVIEW_SIZE;
     }
 
+    // Which detection model to use: by default uses Tensorflow Object Detection API frozen
+    // checkpoints.
+    private enum DetectorMode {
+        TF_OD_API;
+    }
+
     @Override
     protected void setUseNNAPI(final boolean isChecked) {
         runInBackground(() -> detector.setUseNNAPI(isChecked));
@@ -246,11 +261,5 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     @Override
     protected void setNumThreads(final int numThreads) {
         runInBackground(() -> detector.setNumThreads(numThreads));
-    }
-
-    // Which detection model to use: by default uses Tensorflow Object Detection API frozen
-    // checkpoints.
-    private enum DetectorMode {
-        TF_OD_API;
     }
 }

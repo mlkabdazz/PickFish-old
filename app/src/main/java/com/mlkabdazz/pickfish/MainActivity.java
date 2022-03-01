@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             detector = YoloV4Classifier.create(
                     getAssets(),
                     TF_OD_API_MODEL_FILE,
-                    TF_OD_API_LABELS_FILE,
                     TF_OD_API_IS_QUANTIZED
             );
         } catch (final IOException e) {

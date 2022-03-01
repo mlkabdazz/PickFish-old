@@ -526,17 +526,17 @@ public abstract class CameraActivity extends AppCompatActivity
 //        }
     }
 
-    protected void showFrameInfo(String frameInfo) {
-        frameValueTextView.setText(frameInfo);
-    }
+//    protected void showFrameInfo(String frameInfo) {
+//        frameValueTextView.setText(frameInfo);
+//    }
 
-    protected void showCropInfo(String cropInfo) {
-        cropValueTextView.setText(cropInfo);
-    }
+//    protected void showCropInfo(String cropInfo) {
+//        cropValueTextView.setText(cropInfo);
+//    }
 
-    protected void showInference(String inferenceTime) {
-        inferenceTimeTextView.setText(inferenceTime);
-    }
+//    protected void showInference(String inferenceTime) {
+//        inferenceTimeTextView.setText(inferenceTime);
+//    }
 
     protected abstract void processImage();
 

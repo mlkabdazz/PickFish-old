@@ -55,18 +55,16 @@ public class YoloV4Classifier implements Classifier {
      *
      * @param assetManager  The asset manager to be used to load assets.
      * @param modelFilename The filepath of the model GraphDef protocol buffer.
-     * @param labelFilename The filepath of label file for classes.
      * @param isQuantized   Boolean representing model is quantized or not
      */
     public static Classifier create(
             final AssetManager assetManager,
             final String modelFilename,
-            final String labelFilename,
             final boolean isQuantized)
             throws IOException {
         final YoloV4Classifier d = new YoloV4Classifier();
 
-        String actualFilename = labelFilename.split("file:///android_asset/")[1];
+        String actualFilename = "classes.txt";//labelFilename.split("file:///android_asset/")[1];
         InputStream labelsInput = assetManager.open(actualFilename);
         BufferedReader br = new BufferedReader(new InputStreamReader(labelsInput));
         String line;
@@ -173,6 +171,7 @@ public class YoloV4Classifier implements Classifier {
     // config yolov4 tiny
     private static final int[] OUTPUT_WIDTH_TINY = new int[]{2535, 2535};
     private static final int[] OUTPUT_WIDTH_FULL = new int[]{10647, 10647};
+//    private static final int[] OUTPUT_WIDTH_FULL = new int[]{2535, 2535};
     private static final int[][] MASKS_TINY = new int[][]{{3, 4, 5}, {1, 2, 3}};
     private static final int[] ANCHORS_TINY = new int[]{
             23, 27, 37, 58, 81, 82, 81, 82, 135, 169, 344, 319};
