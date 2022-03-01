@@ -168,8 +168,9 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, RESULT_LOAD_IMAGE);
     }
 
-    private void openCamera(){
-        Toast.makeText(this, "Not Ready Yet :)", Toast.LENGTH_SHORT).show();
+    private void openCamera() {
+//        Toast.makeText(this, "Not Ready Yet :)", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, DetectorActivity.class));
     }
 
 
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * handle
+     * handle result from model and do some drawing process.
      *
      * @param bitmap
      * @param results

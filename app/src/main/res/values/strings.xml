@@ -10,4 +10,6 @@
     <string name="information_desc">i\'ll give you some introduction</string>
     <string name="gallery_desc">Do prediction from pict in gallery</string>
     <string name="realtime_desc">Do realtime prediction</string>
+    <string name="tfe_od_app_name" translation_description="Object Detection demo app [CHAR_LIMIT=40]">TFL Detect</string>
+    <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
 </resources>
