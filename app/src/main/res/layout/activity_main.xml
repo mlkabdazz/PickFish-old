@@ -1,83 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:id="@+id/layout_main_activity"
+    tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_pickfish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/pickfish"
-        android:textColor="@color/white"
-        android:fontFamily="@font/remachine_escript_personal_use"
-        android:textSize="40dp" />
-
-    <TextView
-        android:id="@+id/tv_slogan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_pickfish"
-        android:layout_alignStart="@+id/tv_pickfish"
-        android:text="@string/slogan"
-        android:fontFamily="@font/opensans_regular"
-        android:textSize="15dp"
-        android:textColor="@color/white"/>
-
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="140dp"
-        android:background="@drawable/main_background">
+        android:id="@+id/description"
+        android:layout_above="@+id/floating_menu"
+        android:padding="15dp">
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:id="@+id/tv_placeholder"
+            android:textAlignment="center"
+            android:textSize="40sp"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:id="@+id/iv_image"/>
+    </FrameLayout>
 
-        <GridLayout
-            android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/floating_menu">
+
+        <github.com.st235.lib_expandablebottombar.ExpandableBottomBar
+            android:id="@+id/expandable_bottom_bar"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:columnCount="2"
-            android:rowCount="2"
-            android:padding="25dp">
-
-            <ImageButton
-                android:id="@+id/ib_general_model"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/item_background"
-                android:layout_margin="10dp"
-                android:src="@mipmap/fish_bluexwhite"
-                android:scaleType="centerInside"/>
-
-            <ImageButton
-                android:id="@+id/ib_specific_model"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/item_background"
-                android:layout_margin="10dp"
-                android:src="@mipmap/fish_gray"
-                android:scaleType="centerInside"/>
-
-            <ImageButton
-                android:id="@+id/ib_gallery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/item_background"
-                android:layout_margin="10dp"
-                android:src="@mipmap/gallery"
-                android:scaleType="centerInside"/>
-
-            <ImageButton
-                android:id="@+id/ib_information"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/item_background"
-                android:src="@mipmap/information"
-                android:scaleType="centerInside"
-                android:layout_margin="10dp"/>
-        </GridLayout>
-    </RelativeLayout>
+            android:layout_margin="20dp"
+            app:exb_backgroundColor="@color/background"
+            app:exb_backgroundCornerRadius="30dp"
+            app:exb_itemInactiveColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>
+

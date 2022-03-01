@@ -2,7 +2,8 @@ package com.mlkabdazz.pickfish;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
 
@@ -20,6 +21,6 @@ public class SplashScreen extends AppCompatActivity {
         handler.postDelayed(() -> {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
-        }, 3000L);
+        }, 1000L);
     }
 }
