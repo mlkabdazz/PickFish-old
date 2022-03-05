@@ -48,10 +48,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
 import com.mlkabdazz.pickfish.env.ImageUtils;
 import com.mlkabdazz.pickfish.env.Logger;
 
@@ -70,7 +68,7 @@ public abstract class CameraActivity extends AppCompatActivity
     protected int previewWidth = 0;
     protected int previewHeight = 0;
     protected TextView frameValueTextView, cropValueTextView, inferenceTimeTextView;
-//    protected ImageView bottomSheetArrowImageView;
+    protected ImageView bottomSheetArrowImageView;
     private boolean debug = false;
     private Handler handler;
     private HandlerThread handlerThread;
@@ -81,12 +79,14 @@ public abstract class CameraActivity extends AppCompatActivity
     private int yRowStride;
     private Runnable postInferenceCallback;
     private Runnable imageConverter;
-//    private LinearLayout bottomSheetLayout;
-//    private LinearLayout gestureLayout;
-//    private BottomSheetBehavior<LinearLayout> sheetBehavior;
-//    private ImageView plusImageView, minusImageView;
-//    private SwitchCompat apiSwitchCompat;
-//    private TextView threadsTextView;
+
+    private LinearLayout bottomSheetLayout;
+    private LinearLayout gestureLayout;
+    private BottomSheetBehavior<LinearLayout> sheetBehavior;
+
+    private ImageView plusImageView, minusImageView;
+    private SwitchCompat apiSwitchCompat;
+    private TextView threadsTextView;
 
     private static boolean allPermissionsGranted(final int[] grantResults) {
         for (int result : grantResults) {
@@ -103,7 +103,7 @@ public abstract class CameraActivity extends AppCompatActivity
         super.onCreate(null);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.tfe_od_activity_camera);
+        setContentView(R.layout.activity_camera);
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -118,60 +118,60 @@ public abstract class CameraActivity extends AppCompatActivity
 //        plusImageView = findViewById(R.id.plus);
 //        minusImageView = findViewById(R.id.minus);
 //        apiSwitchCompat = findViewById(R.id.api_info_switch);
-//        bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
-//        gestureLayout = findViewById(R.id.gesture_layout);
-//        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-//        bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
+        bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
+        gestureLayout = findViewById(R.id.gesture_layout);
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+        bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow);
 
-//        ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
-//        vto.addOnGlobalLayoutListener(
-//                new ViewTreeObserver.OnGlobalLayoutListener() {
-//                    @Override
-//                    public void onGlobalLayout() {
-//                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-//                            gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-//                        } else {
-//                            gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//                        }
-//                        //                int width = bottomSheetLayout.getMeasuredWidth();
-//                        int height = gestureLayout.getMeasuredHeight();
-//
-//                        sheetBehavior.setPeekHeight(height);
-//                    }
-//                });
-//        sheetBehavior.setHideable(false);
+        ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                            gestureLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        } else {
+                            gestureLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                        //                int width = bottomSheetLayout.getMeasuredWidth();
+                        int height = gestureLayout.getMeasuredHeight();
 
-//        sheetBehavior.setBottomSheetCallback(
-//                new BottomSheetBehavior.BottomSheetCallback() {
-//                    @Override
-//                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
-//                        switch (newState) {
-//                            case BottomSheetBehavior.STATE_HIDDEN:
-//                                break;
-//                            case BottomSheetBehavior.STATE_EXPANDED: {
-//                                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down);
-//                            }
-//                            break;
-//                            case BottomSheetBehavior.STATE_COLLAPSED: {
-//                                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
-//                            }
-//                            break;
-//                            case BottomSheetBehavior.STATE_DRAGGING:
-//                                break;
-//                            case BottomSheetBehavior.STATE_SETTLING:
-//                                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
-//                                break;
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-//                    }
-//                });
+                        sheetBehavior.setPeekHeight(height);
+                    }
+                });
+        sheetBehavior.setHideable(false);
 
-//        frameValueTextView = findViewById(R.id.frame_info);
-//        cropValueTextView = findViewById(R.id.crop_info);
-//        inferenceTimeTextView = findViewById(R.id.inference_info);
+        sheetBehavior.setBottomSheetCallback(
+                new BottomSheetBehavior.BottomSheetCallback() {
+                    @Override
+                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                        switch (newState) {
+                            case BottomSheetBehavior.STATE_HIDDEN:
+                                break;
+                            case BottomSheetBehavior.STATE_EXPANDED: {
+                                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_down);
+                            }
+                            break;
+                            case BottomSheetBehavior.STATE_COLLAPSED: {
+                                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
+                            }
+                            break;
+                            case BottomSheetBehavior.STATE_DRAGGING:
+                                break;
+                            case BottomSheetBehavior.STATE_SETTLING:
+                                bottomSheetArrowImageView.setImageResource(R.drawable.icn_chevron_up);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                    }
+                });
+
+        frameValueTextView = findViewById(R.id.frame_info);
+        cropValueTextView = findViewById(R.id.crop_info);
+        inferenceTimeTextView = findViewById(R.id.inference_info);
 
 //        apiSwitchCompat.setOnCheckedChangeListener(this);
 
@@ -500,9 +500,9 @@ public abstract class CameraActivity extends AppCompatActivity
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//        setUseNNAPI(isChecked);
-//        if (isChecked) apiSwitchCompat.setText("NNAPI");
-//        else apiSwitchCompat.setText("TFLITE");
+        setUseNNAPI(isChecked);
+        if (isChecked) apiSwitchCompat.setText("NNAPI");
+        else apiSwitchCompat.setText("TFLITE");
     }
 
     @Override
@@ -526,17 +526,17 @@ public abstract class CameraActivity extends AppCompatActivity
 //        }
     }
 
-//    protected void showFrameInfo(String frameInfo) {
-//        frameValueTextView.setText(frameInfo);
-//    }
+    protected void showFrameInfo(String frameInfo) {
+        frameValueTextView.setText(frameInfo);
+    }
 
-//    protected void showCropInfo(String cropInfo) {
-//        cropValueTextView.setText(cropInfo);
-//    }
+    protected void showCropInfo(String cropInfo) {
+        cropValueTextView.setText(cropInfo);
+    }
 
-//    protected void showInference(String inferenceTime) {
-//        inferenceTimeTextView.setText(inferenceTime);
-//    }
+    protected void showInference(String inferenceTime) {
+        inferenceTimeTextView.setText(inferenceTime);
+    }
 
     protected abstract void processImage();
 

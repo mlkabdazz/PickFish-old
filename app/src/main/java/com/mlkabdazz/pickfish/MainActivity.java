@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,9 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
     public static final int TF_OD_API_INPUT_SIZE = 416;
     private static final int RESULT_LOAD_IMAGE = 1;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TF_OD_API_MODEL_FILE = "yolov4-basic-416-fp16.tflite";
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/classes.txt";
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
     private static final Logger LOGGER = new Logger();
     Uri imageUri;
@@ -51,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     MenuItemDescriptor midFishGray;
     MenuItemDescriptor midGallery;
     MenuItemDescriptor midInformation;
+    MenuItemDescriptor midHelp;
     Menu menu;
     ImageView imageView;
-    TextView tvPlaceholder;
     private Classifier detector;
 
     private void initBox() {
@@ -80,18 +77,19 @@ public class MainActivity extends AppCompatActivity {
         menu = expandableBottomBar.getMenu();
         midFishGray = new MenuItemDescriptor.Builder(this, R.id.icon_camera, R.drawable.ic_camera, R.string.realtime, Color.GRAY).build();
         midGallery = new MenuItemDescriptor.Builder(this, R.id.icon_gallery, R.drawable.ic_gallery, R.string.gallery, Color.GRAY).build();
-        midInformation = new MenuItemDescriptor.Builder(this, R.id.icon_information, R.drawable.ic_info, R.string.information, Color.GRAY).build();
+        midInformation = new MenuItemDescriptor.Builder(this, R.id.icon_information, R.drawable.ic_info, R.string.about, Color.GRAY).build();
+        midHelp = new MenuItemDescriptor.Builder(this, R.id.icon_help, R.drawable.ic_help, R.string.help, Color.GRAY).build();
         imageView = findViewById(R.id.iv_image);
-        tvPlaceholder = findViewById(R.id.tv_placeholder);
 
         menu.add(midFishGray);
         menu.add(midGallery);
         menu.add(midInformation);
+        menu.add(midHelp);
 
         expandableBottomBar.setOnItemSelectedListener((view, item, byUser) -> {
             int selectedId = view.getId();
             if (selectedId == R.id.icon_information) {
-                spotlight();
+                dialogInformation();
             }
 
             if (selectedId == R.id.icon_gallery) {
@@ -100,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (selectedId == R.id.icon_camera) {
                 openCamera();
+            }
+
+            if (selectedId == R.id.icon_help) {
+                spotlight();
             }
             return null;
         });
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         expandableBottomBar.setOnItemReselectedListener((view, item, byUser) -> {
             int selectedId = view.getId();
             if (selectedId == R.id.icon_information) {
-                spotlight();
+                dialogInformation();
             }
             if (selectedId == R.id.icon_gallery) {
                 openGallery();
@@ -115,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
             if (selectedId == R.id.icon_camera) {
                 openCamera();
+            }
+            if (selectedId == R.id.icon_help) {
+                spotlight();
             }
             return null;
         });
@@ -134,17 +139,17 @@ public class MainActivity extends AppCompatActivity {
                 .setInset(20)
                 .setTargetView(realtime)
                 .setTitle("Realtime")
-                .setDescription("Do realtime prediction")
+                .setDescription("Realtime Prediction")
                 .setListener(new SpotlightListener() {
                     @Override
                     public void onEnd(@Nullable View targetView) {
                         if (realtime.equals(targetView)) {
                             builder.setTitle("Gallery");
-                            builder.setDescription("Do prediction from pict in gallery");
+                            builder.setDescription("Prediction from Images");
                             builder.setTargetView(gallery);
                         } else if (gallery.equals(targetView)) {
-                            builder.setTitle("Information");
-                            builder.setDescription("Every information about decs and version in here!");
+                            builder.setTitle("About");
+                            builder.setDescription("Information about model and apps");
                             builder.setTargetView(information);
                         } else if (information.equals(targetView)) {
                             return;
@@ -168,8 +173,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-//        Toast.makeText(this, "Not Ready Yet :)", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, DetectorActivity.class));
+    }
+
+    private void dialogInformation() {
+        new InformationDialog().show(getSupportFragmentManager(), "Dialog Information opened");
     }
 
 
@@ -199,9 +207,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * handle result from model and do some drawing process.
-     *
-     * @param bitmap
-     * @param results
      */
     private void handleResult(Bitmap bitmap, List<Classifier.Recognition> results) {
         final Canvas canvas = new Canvas(bitmap);
@@ -210,19 +215,22 @@ public class MainActivity extends AppCompatActivity {
         paint.setStrokeWidth(1.0f);
         String text = "";
 
+        String fishCondition = "";// getInferences(results);
+
         for (final Classifier.Recognition result : results) {
             final RectF location = result.getLocation();
             if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
 
                 if (result.getTitle().equalsIgnoreCase("Fish")) {
                     paint.setColor(Color.GREEN);
+                    text = result.getTitle() + " - " + fishCondition;
                 } else if (result.getTitle().contains("Eyes")) {
                     paint.setColor(Color.YELLOW);
+                    text = result.getTitle() + "(" + (int) (result.getConfidence() * 100) + "%)";
                 } else if (result.getTitle().contains("Skins")) {
                     paint.setColor(Color.RED);
+                    text = result.getTitle() + "(" + (int) (result.getConfidence() * 100) + "%)";
                 }
-
-                text = result.getTitle() + "(" + (int) (result.getConfidence() * 100) + "%)";
 
                 RectF tagSize = new RectF(0, 0, 0, 0);
                 float margin = (location.width() - tagSize.width()) / 2.0f;
@@ -233,6 +241,50 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         imageView.setImageBitmap(bitmap);
+    }
+
+    /**
+     * Inference for get final condition of fish
+     *
+     * @return Fresh, Medium, and Spoiled
+     */
+    private String getInferences(List<Classifier.Recognition> recognitions) {
+        String eyesCondition = "";
+        String skinsCondition = "";
+        String[] eyes = {"fresh_eyes", "normal_eyes", "spoil_eyes"};
+        String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
+
+        for (Classifier.Recognition recognition : recognitions) {
+            if (recognition.getTitle().contains("eyes")) {
+                eyesCondition = recognition.getTitle();
+            } else if (recognition.getTitle().contains("skins")) {
+                skinsCondition = recognition.getTitle();
+            }
+        }
+
+        if ((eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[0]))) {
+            return "Fresh";
+        } else if (
+                (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
+                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
+                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
+            return "Medium";
+        } else if (
+                (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[2])) ||
+                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
+            return "Spoil";
+        } else {
+            if (eyesCondition.isEmpty()) {
+                return "Fail Inference - Eyes Not Found";
+            } else if (skinsCondition.isEmpty()) {
+                return "Fail Inference - Skins Not Found";
+            } else {
+                return "Fail Inference";
+            }
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 Fish
 Fresh_Eyes
 Fresh_Skins
-Normal_Eyes
-Normal_Skins
+Medium_Eyes
+Medium_Skins
 Spoil_Eyes
 Spoil_Skins

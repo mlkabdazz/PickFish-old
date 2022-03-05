@@ -16,6 +16,7 @@ package com.mlkabdazz.pickfish;
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -38,6 +39,7 @@ import com.mlkabdazz.pickfish.env.Logger;
 import java.io.IOException;
 import java.util.List;
 
+@SuppressLint("ValidFragment")
 public class LegacyCameraConnectionFragment extends Fragment {
     private static final Logger LOGGER = new Logger();
     /**

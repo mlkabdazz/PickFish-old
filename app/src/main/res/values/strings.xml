@@ -4,6 +4,7 @@
     <string name="pickfish">PickFish</string>
     <string name="realtime">Realtime</string>
     <string name="information">Information</string>
+    <string name="about">About</string>
     <string name="gallery">Gallery</string>
     <string name="next_target">Next target</string>
     <string name="close_spotlight">Close spotlight</string>
@@ -12,4 +13,10 @@
     <string name="realtime_desc">Do realtime prediction</string>
     <string name="tfe_od_app_name" translation_description="Object Detection demo app [CHAR_LIMIT=40]">TFL Detect</string>
     <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+    <string name="help">Help</string>
+    <string name="version">Version : 0.0.1</string>
+    <string name="model">Model : YOLOV4</string>
+    <string name="input_size_model">Input Size Model : 416</string>
+    <string name="github">Github : mlkabdazz</string>
+    <string name="frame">Frame</string>
 </resources>

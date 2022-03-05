@@ -61,7 +61,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
     private static final boolean MAINTAIN_ASPECT = false;
-    private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
+    private static final Size DESIRED_PREVIEW_SIZE = new Size(3000, 3000);
     private static final boolean SAVE_PREVIEW_BITMAP = false;
     private static final float TEXT_SIZE_DIP = 10;
     OverlayView trackingOverlay;
@@ -224,22 +224,22 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                         computingDetection = false;
 
-//                        runOnUiThread(
-//                                new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        showFrameInfo(previewWidth + "x" + previewHeight);
-//                                        showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-//                                        showInference(lastProcessingTimeMs + "ms");
-//                                    }
-//                                });
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showFrameInfo(previewWidth + "x" + previewHeight);
+                                        showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
+                                        showInference(lastProcessingTimeMs + "ms");
+                                    }
+                                });
                     }
                 });
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.tfe_od_camera_connection_fragment_tracking;
+        return R.layout.camera_connection_fragment_tracking;
     }
 
     @Override

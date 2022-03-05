@@ -5,4 +5,5 @@
     <item name="icon_camera" type="id"/>
     <item name="icon_gallery" type="id"/>
     <item name="icon_information" type="id"/>
+    <item name="icon_help" type="id"/>
 </resources>
