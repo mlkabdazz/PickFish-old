@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         paint.setStrokeWidth(1.0f);
         String text = "";
 
-        String fishCondition = "";// getInferences(results);
+        String fishCondition = getInferences(results);
 
         for (final Classifier.Recognition result : results) {
             final RectF location = result.getLocation();
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (result.getTitle().equalsIgnoreCase("Fish")) {
                     paint.setColor(Color.GREEN);
-                    text = result.getTitle() + " - " + fishCondition;
+                    text = result.getTitle() + " : " + fishCondition;
                 } else if (result.getTitle().contains("Eyes")) {
                     paint.setColor(Color.YELLOW);
                     text = result.getTitle() + "(" + (int) (result.getConfidence() * 100) + "%)";
@@ -255,9 +255,9 @@ public class MainActivity extends AppCompatActivity {
         String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
 
         for (Classifier.Recognition recognition : recognitions) {
-            if (recognition.getTitle().contains("eyes")) {
+            if (recognition.getTitle().contains("Eyes")) {
                 eyesCondition = recognition.getTitle();
-            } else if (recognition.getTitle().contains("skins")) {
+            } else if (recognition.getTitle().contains("Skins")) {
                 skinsCondition = recognition.getTitle();
             }
         }

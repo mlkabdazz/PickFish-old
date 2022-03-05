@@ -47,17 +47,14 @@ public interface Classifier {
          * the object.
          */
         private final String id;
-
-        /**
-         * Display name for the recognition.
-         */
-        private final String title;
-
         /**
          * A sortable score for how good the recognition is relative to others. Higher should be better.
          */
-        private final Float confidence;
-
+        private Float confidence;
+        /**
+         * Display name for the recognition.
+         */
+        private String title;
         /**
          * Optional location within the source image for the location of the recognized object.
          */
@@ -89,8 +86,16 @@ public interface Classifier {
             return title;
         }
 
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
         public Float getConfidence() {
             return confidence;
+        }
+
+        public void setConfidence(Float confidence) {
+            this.confidence = confidence;
         }
 
         public RectF getLocation() {
@@ -122,6 +127,9 @@ public interface Classifier {
 
             if (confidence != null) {
                 resultString += String.format("(%.1f%%) ", confidence * 100.0f);
+
+            } else {
+                resultString += "";
             }
 
             if (location != null) {
