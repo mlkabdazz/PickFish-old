@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.matadesigns.spotlight.SpotlightBuilder;
 import com.matadesigns.spotlight.abstraction.SpotlightListener;
+import com.mlkabdazz.pickfish.env.InferenceUtils;
 import com.mlkabdazz.pickfish.env.Logger;
 import com.mlkabdazz.pickfish.env.Utils;
 import com.mlkabdazz.pickfish.tflite.Classifier;
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         paint.setStrokeWidth(1.0f);
         String text = "";
 
-        String fishCondition = getInferences(results);
+        String fishCondition = InferenceUtils.getInferences(results);
 
         for (final Classifier.Recognition result : results) {
             final RectF location = result.getLocation();
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (result.getTitle().equalsIgnoreCase("Fish")) {
                     paint.setColor(Color.GREEN);
-                    text = result.getTitle() + " : " + fishCondition;
+                    text = result.getTitle() + ": " + fishCondition;
                 } else if (result.getTitle().contains("Eyes")) {
                     paint.setColor(Color.YELLOW);
                     text = result.getTitle() + "(" + (int) (result.getConfidence() * 100) + "%)";
@@ -243,48 +244,48 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
     }
 
-    /**
-     * Inference for get final condition of fish
-     *
-     * @return Fresh, Medium, and Spoiled
-     */
-    private String getInferences(List<Classifier.Recognition> recognitions) {
-        String eyesCondition = "";
-        String skinsCondition = "";
-        String[] eyes = {"fresh_eyes", "normal_eyes", "spoil_eyes"};
-        String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
-
-        for (Classifier.Recognition recognition : recognitions) {
-            if (recognition.getTitle().contains("Eyes")) {
-                eyesCondition = recognition.getTitle();
-            } else if (recognition.getTitle().contains("Skins")) {
-                skinsCondition = recognition.getTitle();
-            }
-        }
-
-        if ((eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[0]))) {
-            return "Fresh";
-        } else if (
-                (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
-            return "Medium";
-        } else if (
-                (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[2])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
-            return "Spoil";
-        } else {
-            if (eyesCondition.isEmpty()) {
-                return "Fail Inference - Eyes Not Found";
-            } else if (skinsCondition.isEmpty()) {
-                return "Fail Inference - Skins Not Found";
-            } else {
-                return "Fail Inference";
-            }
-        }
-    }
+//    /**
+//     * Inference for get final condition of fish
+//     *
+//     * @return Fresh, Medium, and Spoiled
+//     */
+//    private String getInferences(List<Classifier.Recognition> recognitions) {
+//        String eyesCondition = "";
+//        String skinsCondition = "";
+//        String[] eyes = {"fresh_eyes", "normal_eyes", "spoil_eyes"};
+//        String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
+//
+//        for (Classifier.Recognition recognition : recognitions) {
+//            if (recognition.getTitle().contains("Eyes")) {
+//                eyesCondition = recognition.getTitle();
+//            } else if (recognition.getTitle().contains("Skins")) {
+//                skinsCondition = recognition.getTitle();
+//            }
+//        }
+//
+//        if ((eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[0]))) {
+//            return "Fresh";
+//        } else if (
+//                (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
+//            return "Medium";
+//        } else if (
+//                (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[2])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
+//            return "Spoil";
+//        } else {
+//            if (eyesCondition.isEmpty()) {
+//                return "Fail Inference - Eyes Not Found";
+//            } else if (skinsCondition.isEmpty()) {
+//                return "Fail Inference - Skins Not Found";
+//            } else {
+//                return "Fail Inference";
+//            }
+//        }
+//    }
 
 }

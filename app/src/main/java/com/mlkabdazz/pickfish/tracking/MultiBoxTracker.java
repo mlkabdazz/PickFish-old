@@ -150,7 +150,7 @@ public class MultiBoxTracker {
             if (recognition.detectionConfidence == -1f) {
                 labelString = recognition.title;
             } else {
-                labelString = recognition.title + " " + (int) (100 * recognition.detectionConfidence) + "%";
+                labelString = recognition.title + " (" + (int) (100 * recognition.detectionConfidence) + "%)";
             }
 
 //            final String labelString =

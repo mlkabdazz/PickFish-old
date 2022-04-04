@@ -36,6 +36,7 @@ import com.mlkabdazz.pickfish.customview.OverlayView;
 import com.mlkabdazz.pickfish.customview.OverlayView.DrawCallback;
 import com.mlkabdazz.pickfish.env.BorderedText;
 import com.mlkabdazz.pickfish.env.ImageUtils;
+import com.mlkabdazz.pickfish.env.InferenceUtils;
 import com.mlkabdazz.pickfish.env.Logger;
 import com.mlkabdazz.pickfish.tflite.Classifier;
 import com.mlkabdazz.pickfish.tflite.YoloV4Classifier;
@@ -208,7 +209,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 new LinkedList<Classifier.Recognition>();
 
                         String text = "";
-                        String fishCondition = getInferences(results);
+                        String fishCondition = InferenceUtils.getInferences(results);
 
                         for (final Classifier.Recognition result : results) {
                             final RectF location = result.getLocation();
@@ -216,7 +217,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                 if (result.getTitle().equalsIgnoreCase("Fish")) {
                                     paint.setColor(Color.GREEN);
-                                    text = result.getTitle() + " : " + fishCondition;
+                                    text = result.getTitle() + ": " + fishCondition;
                                     result.setTitle(text);
                                     result.setConfidence(null);
                                 } else if (result.getTitle().contains("Eyes")) {
@@ -226,7 +227,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 }
 
                                 canvas.drawRect(location, paint);
-
 
                                 cropToFrameTransform.mapRect(location);
 
@@ -273,49 +273,49 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         runInBackground(() -> detector.setNumThreads(numThreads));
     }
 
-    /**
-     * Inference for get final condition of fish
-     *
-     * @return Fresh, Medium, and Spoiled
-     */
-    private String getInferences(List<Classifier.Recognition> recognitions) {
-        String eyesCondition = "";
-        String skinsCondition = "";
-        String[] eyes = {"fresh_eyes", "normal_eyes", "spoil_eyes"};
-        String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
-
-        for (Classifier.Recognition recognition : recognitions) {
-            if (recognition.getTitle().contains("Eyes")) {
-                eyesCondition = recognition.getTitle();
-            } else if (recognition.getTitle().contains("Skins")) {
-                skinsCondition = recognition.getTitle();
-            }
-        }
-
-        if ((eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[0]))) {
-            return "Fresh";
-        } else if (
-                (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
-            return "Medium";
-        } else if (
-                (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[2])) ||
-                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
-            return "Spoil";
-        } else {
-            if (eyesCondition.isEmpty()) {
-                return "Fail Inference (Eyes Not Found)";
-            } else if (skinsCondition.isEmpty()) {
-                return "Fail Inference (Skins Not Found)";
-            } else {
-                return "Fail Inference (Rule Not Found)";
-            }
-        }
-    }
+//    /**
+//     * Inference for get final condition of fish
+//     *
+//     * @return Fresh, Medium, and Spoiled
+//     */
+//    private String getInferences(List<Classifier.Recognition> recognitions) {
+//        String eyesCondition = "";
+//        String skinsCondition = "";
+//        String[] eyes = {"fresh_eyes", "normal_eyes", "spoil_eyes"};
+//        String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
+//
+//        for (Classifier.Recognition recognition : recognitions) {
+//            if (recognition.getTitle().contains("Eyes")) {
+//                eyesCondition = recognition.getTitle();
+//            } else if (recognition.getTitle().contains("Skins")) {
+//                skinsCondition = recognition.getTitle();
+//            }
+//        }
+//
+//        if ((eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[0]))) {
+//            return "Fresh";
+//        } else if (
+//                (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[0])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[1])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[0]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
+//            return "Medium";
+//        } else if (
+//                (eyesCondition.equalsIgnoreCase(eyes[2]) && skinsCondition.equalsIgnoreCase(skins[2])) ||
+//                        (eyesCondition.equalsIgnoreCase(eyes[1]) && skinsCondition.equalsIgnoreCase(skins[2]))) {
+//            return "Spoil";
+//        } else {
+//            if (eyesCondition.isEmpty()) {
+//                return "Fail Inference (Eyes Not Found)";
+//            } else if (skinsCondition.isEmpty()) {
+//                return "Fail Inference (Skins Not Found)";
+//            } else {
+//                return "Fail Inference (Rule Not Found)";
+//            }
+//        }
+//    }
 
     // Which detection model to use: by default uses Tensorflow Object Detection API frozen
     // checkpoints.
