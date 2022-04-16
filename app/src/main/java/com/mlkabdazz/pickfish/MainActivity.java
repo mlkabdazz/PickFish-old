@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
     public static final int TF_OD_API_INPUT_SIZE = 416;
     private static final int RESULT_LOAD_IMAGE = 1;
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-basic-416-fp16.tflite";
+//    private static final String TF_OD_API_MODEL_FILE = "yolov4-basic-416-fp16.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-fp16.tflite";
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
     private static final Logger LOGGER = new Logger();
     Uri imageUri;
