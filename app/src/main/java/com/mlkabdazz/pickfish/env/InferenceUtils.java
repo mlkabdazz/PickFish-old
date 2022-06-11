@@ -14,8 +14,8 @@ public class InferenceUtils {
     public static String getInferences(List<Classifier.Recognition> recognitions) {
         String eyesCondition = "";
         String skinsCondition = "";
-        String[] eyes = {"fresh_eyes", "normal_eyes", "spoil_eyes"};
-        String[] skins = {"fresh_skins", "normal_skins", "spoil_skins"};
+        String[] eyes = {"fresh_eyes", "medium_eyes", "spoil_eyes"};
+        String[] skins = {"fresh_skins", "medium_skins", "spoil_skins"};
 
         for (Classifier.Recognition recognition : recognitions) {
             if (recognition.getTitle().contains("Eyes")) {
